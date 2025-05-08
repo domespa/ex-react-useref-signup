@@ -1,25 +1,42 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./form.css";
 
 function Form() {
-  const [name, setName] = useState("");
+  console.log("render");
+  const nameRef = useRef();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [specs, setSpecs] = useState("");
-  const [exAge, setExage] = useState("");
-  const [bio, setBio] = useState("");
+  const specsRef = useRef();
+  const exAgeRef = useRef();
+  const bioRef = useRef();
   const [err, setErr] = useState("");
+
+  const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbers = "0123456789";
+  const symbols = "!@#$%^&*()-_=+[]{}|;:'\\\",.<>?/`~";
+
+  const isValidUsername =
+    username.length >= 6 &&
+    [...username].every((c) => letters.includes(c) || numbers.includes(c));
+  const isValidPassword =
+    password.length >= 8 &&
+    [...password].some((c) => letters.includes(c)) &&
+    [...password].some((c) => numbers.includes(c)) &&
+    [...password].some((c) => symbols.includes(c));
+
+  const trimmedBio = bioRef;
+  const isValidBio = trimmedBio.length >= 100 && trimmedBio.length <= 1000;
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (
-      !name.trim() ||
+      !nameRef.current.value ||
       !username.trim() ||
       !password.trim() ||
-      !specs ||
-      !exAge ||
-      !bio.trim() ||
+      !specsRef.current.value ||
+      !exAgeRef.current.value ||
+      !bioRef ||
       err
     ) {
       setErr("Per favore compila tutti i dati inseriti");
@@ -27,13 +44,15 @@ function Form() {
     }
 
     setErr("");
-    console.log({
-      name,
-      password,
-      specs,
-      exAge,
-      bio,
-    });
+    console.log(`
+        - Nome: ${nameRef.current.value};
+        - Username: ${username};
+        - Pass: ${password};
+        - Spec: ${specsRef.current.value};
+        - Experience: ${exAge.current.value};
+        - Bio: ${bioRef.current.value}
+
+    `);
   };
 
   return (
@@ -45,8 +64,7 @@ function Form() {
         <input
           type="text"
           placeholder="Inserisci il tuo nome completo"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          ref={nameRef}
         />
 
         <input
@@ -55,6 +73,13 @@ function Form() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
+        {username && (
+          <p style={{ color: isValidUsername ? "green" : "red" }}>
+            {isValidUsername
+              ? "Username valido."
+              : "L'username deve essere alfanumerico e di almeno 6 caratteri."}
+          </p>
+        )}
 
         <input
           type="password"
@@ -62,25 +87,29 @@ function Form() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-
-        <select value={specs} onChange={(e) => setSpecs(e.target.value)}>
+        {password && (
+          <p style={{ color: isValidPassword ? "green" : "red" }}>
+            {isValidPassword
+              ? "Password valida."
+              : "La password deve contenere almeno 8 caratteri, una lettera, un numero e un simbolo."}
+          </p>
+        )}
+        <select ref={specsRef}>
           <option value="">Seleziona una Specializzazione</option>
           <option value="Full Stack">Full Stack</option>
           <option value="Frontend">Frontend</option>
           <option value="Backendk">Backend</option>
         </select>
 
-        <input
-          type="number"
-          min={0}
-          value={exAge}
-          onChange={(e) => setExage(e.target.value)}
-        />
-        <textarea
-          placeholder="Scrivi la tua biografia"
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-        />
+        <input type="number" min={0} ref={exAgeRef} />
+        <textarea placeholder="Scrivi la tua biografia" ref={bioRef} />
+        {bioRef && (
+          <p style={{ color: isValidBio ? "green" : "red" }}>
+            {isValidBio
+              ? "Descrizione valida."
+              : "La descrizione deve contenere tra 100 e 1000 caratteri."}
+          </p>
+        )}
         <button type="submit">Registrati</button>
       </form>
     </>
