@@ -1,8 +1,8 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./form.css";
 
 function Form() {
-  console.log("render");
+  console.log("Rerender");
   const nameRef = useRef();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -54,6 +54,11 @@ function Form() {
 
     `);
   };
+
+  useEffect(() => {
+    nameRef.current.focus();
+    nameRef.current.select();
+  }, []);
 
   return (
     <>
@@ -111,6 +116,7 @@ function Form() {
           </p>
         )}
         <button type="submit">Registrati</button>
+        <button onClick={() => (nameRef.current.value = "")}>Reset</button>
       </form>
     </>
   );

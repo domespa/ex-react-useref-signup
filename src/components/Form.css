@@ -16,3 +16,7 @@ textarea {
 .error {
   color: red;
 }
+
+button {
+  margin-right: 6px;
+}
