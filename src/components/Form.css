@@ -1,0 +1,18 @@
+form {
+  width: 500px;
+}
+
+input,
+textarea,
+select {
+  margin: 16px;
+  width: 500px;
+}
+
+textarea {
+  height: 200px;
+}
+
+.error {
+  color: red;
+}
